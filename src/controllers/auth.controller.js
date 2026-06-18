@@ -42,11 +42,78 @@ async function registerUserController(req , res){
   })
 
   // now we create a token for this user
-  const token = jwt.sign
+  const token = jwt.sign({
+    id : user.id,
+    username : user.username
+  }, process.env.JWT_SECRET, {
+    expiresIn : "1d"
+  })
+  // now we send this token to the client in a cookie
+  res.cookie("token", token )
+
+  // now we send the response to the client
+  res.status(201).json({
+    message : "User registered successfully",
+    user : {
+      id : user.id,
+      username : user.username,
+      email : user.email
+    }
+  })
 }
+  // we can also send the token in the response body if we want
+
+  /**
+   * @name loginUserController
+   * @description login a user, expects email and password in request body
+   * @access Public
+   */
+
+  async function loginUserController(req, res){
+    const{ email , password } = req.body
+
+    // if email is not registered , return error
+    const user = await userModel.findOne({email})
+
+    if(!user){
+      return res.status(400).json({
+        message : "email not registered "
+      })
+    }
+    // now as the user exists , we have to check the password
+    const isPasswordValid = await bcrypt.compare(password,user.password)
+
+    // if the password entered is not valid , return 
+    if(!isPasswordValid){
+      return res.status(400).json({
+        message :"Wrong Password!! , Try again "
+      })
+    }
+    // now we have a valid user with correct password
+    // now we create a token
+
+    const token = jwt.sign(
+      { id : user.id , username: user.username},
+      process.env.JWT_SECRET,
+      {expiresIn: "1d"}
+    )
+    // now we store this token in a cookie
+    res.cookie("token",token)
+    // now we send the response to the client
+    res.status(200).json({
+      message : "User logged in successfully",
+      // we can also send the token in the response body if we want
+      user : {
+        id : user._id,
+        username : user.username,
+        email : user.email
+      }
+    })
+  }
 
 
 module.exports = {
-  registerUserController
+  registerUserController,
+  loginUserController
 }
 // exports an object
