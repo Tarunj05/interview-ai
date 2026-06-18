@@ -1,10 +1,11 @@
 const express = require("express")
-
+const cookieParser = require("cookie-parser")
 // creating an instance of server
 const app = express()
 
 // middlewares
 app.use( express.json() );
+app.use(cookieParser());
 
 // REQUIRE ALL THE ROUTES HERE
 
