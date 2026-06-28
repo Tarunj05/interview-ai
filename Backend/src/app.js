@@ -1,11 +1,17 @@
 const express = require("express")
 const cookieParser = require("cookie-parser")
+const cors = require( "cors")
 // creating an instance of server
 const app = express()
 
 // middlewares
 app.use( express.json() );
 app.use(cookieParser());
+// creating a middleware to handle cors error
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials: true
+}));
 
 // REQUIRE ALL THE ROUTES HERE
 

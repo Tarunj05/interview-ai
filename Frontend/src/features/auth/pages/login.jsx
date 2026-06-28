@@ -4,6 +4,7 @@ import "../auth.form.scss"
 import { useAuth } from '../hooks/useAuth'
 
 const login = () => {
+  const navigate = useNavigate();
 
   const {loading,handleLogin} = useAuth()
 
@@ -11,12 +12,13 @@ const login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const navigate = useNavigate
 
-  const handleSubmit = (e) =>{
+
+  const handleSubmit = async (e) =>{
     e.preventDefault()
 
-    handleLogin({email,password})
+    await handleLogin({email,password})
+    navigate("/")
   }
 
   if(loading){
